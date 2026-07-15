@@ -1,0 +1,32 @@
+name: distributive-preferences
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - pyarrow
+  - scipy
+  - statsmodels
+  - scikit-learn
+  - pytest
+  - r-base
+  - r-tidyverse
+  - r-here
+  - r-irkernel
+  - r-mclust
+  - r-nnet
+  - r-ordinal
+  - r-broom
+  - r-broom.mixed
+  - r-marginaleffects
+  - r-arrow
+  - r-patchwork
+  - r-lavaan
+  - r-diagrammer
+  - r-diagrammersvg
+  - r-rsvg
+  - r-magick
+  - pip:
+      - snakemake

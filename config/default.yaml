@@ -1,0 +1,233 @@
+# Registry of raw survey exports and how to read them.
+# Add a new entry here whenever a new wave/country file is dropped into raw-data/.
+waves:
+  wave1_ch:
+    file: wave1_CH_120624.csv
+    wave: 1
+    country: CH
+    topic: heating-pv-choice
+    platform: qualtrics       # 2 metadata rows (question text, ImportId JSON) below the header
+  wave2_ch:
+    file: wave2_CH_111224_1531.csv
+    wave: 2
+    country: CH
+    topic: flying-wtc-wtp
+    platform: qualtrics
+  wave2_cn:
+    file: wave2_CN_111224_1532.csv
+    wave: 2
+    country: CN
+    topic: flying-wtc-wtp
+    platform: qualtrics
+  wave2_us:
+    file: wave2_US_111224_1531.csv
+    wave: 2
+    country: US
+    topic: flying-wtc-wtp
+    platform: qualtrics
+  wave3_ch:
+    file: wave3_CH_240225_1004.csv
+    wave: 3
+    country: CH
+    topic: ccs-conjoint
+    platform: qualtrics
+  wave3_cn:
+    file: wave3_CN_240225_1752.csv
+    wave: 3
+    country: CN
+    topic: ccs-conjoint
+    platform: qualtrics
+  # Wave 4 is one SoSci export covering 9 countries, distinguished only by
+  # the LANGUAGE field (no explicit country variable in the export). Also
+  # bundles 4 parallel QUESTNNR panel-routing links (qnr6 + Survey_NFDI01-03)
+  # for the same live fielding window -- pooled here, not split, since they
+  # share the same dates and the same proportional split across languages.
+  # A small 'eng' group (102 of 21293 rows, ~0.5%) isn't attributable to any
+  # single country and is dropped by omission (not listed below).
+  wave4_it:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: IT
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: ita
+  wave4_fr:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: FR
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: fre
+  wave4_es:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: ES
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: spa
+  wave4_fi:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: FI
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: fin
+  wave4_pl:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: PL
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: pol
+  wave4_nl:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: NL
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: dut
+  wave4_de:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: DE
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: ger
+  wave4_dk:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: DK
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: dan
+  wave4_ee:
+    file: wave4_EU_060726_1246.csv
+    wave: 4
+    country: EE
+    topic: policy-instruments
+    platform: sosci
+    country_column: LANGUAGE
+    country_value: est
+
+# Columns that carry PII/identifying info when present (only the Qualtrics wave 3
+# exports have them). Dropped unconditionally at preprocessing time, if present.
+pii_columns:
+  - RecipientFirstName
+  - RecipientLastName
+  - RecipientEmail
+  - ExternalReference
+  - IPAddress
+  - LocationLatitude
+  - LocationLongitude
+
+# Non-substantive Qualtrics/SoSci bookkeeping columns dropped at preprocessing time.
+metadata_columns:
+  - StartDate
+  - EndDate
+  - Status
+  - IPAddress
+  - Progress
+  - Duration (in seconds)
+  - Finished
+  - RecordedDate
+  - ResponseId
+  - DistributionChannel
+  - UserLanguage
+  - SelectedLanguage
+  - SERIAL
+  - REF
+  - QUESTNNR
+  - MODE
+  - STARTED
+  - MAILSENT
+  - LASTDATA
+  - STATUS
+  - FINISHED
+  - Q_VIEWER
+  - LASTPAGE
+  - MAXPAGE
+  - MISSING
+  - MISSREL
+  - TIME_RSI
+
+# TODO: fill in per-topic construct definitions (indicator columns for LPA,
+# predictor/outcome formulas for regression) once the codebook for each wave
+# is finalised. See src/analyse/lpa.R and src/analyse/regression.R.
+lpa:
+  n_profiles_max: 8
+  random_seed: 42
+  # Fixed profile count used only for the cross-wave spaghetti comparison
+  # (src/vis/plot_lpa_spaghetti.R) -- independent of each wave's own
+  # BIC-optimal G used everywhere else, so every wave/country sample can be
+  # viewed side by side at the same G.
+  spaghetti_g: 3
+  spaghetti_sample_n: 50
+  # Number of wave/country blocks per row in the main spaghetti grid.
+  spaghetti_ncol: 3
+  # Row titles for the main spaghetti grid -- waves 1, 3, and 4 use Likert
+  # scales; wave 2 uses constant-sum (points-allocation) items.
+  spaghetti_titles:
+    wave1_ch: "Wave 1 Switzerland (Likert scale)"
+    wave2_ch: "Wave 2 Switzerland (constant sum)"
+    wave2_cn: "Wave 2 China (constant sum)"
+    wave2_us: "Wave 2 United States (constant sum)"
+    wave3_ch: "Wave 3 Switzerland (Likert scale)"
+    wave3_cn: "Wave 3 China (Likert scale)"
+    wave4_it: "Wave 4 Italy (Likert scale)"
+    wave4_fr: "Wave 4 France (Likert scale)"
+    wave4_es: "Wave 4 Spain (Likert scale)"
+    wave4_fi: "Wave 4 Finland (Likert scale)"
+    wave4_pl: "Wave 4 Poland (Likert scale)"
+    wave4_nl: "Wave 4 Netherlands (Likert scale)"
+    wave4_de: "Wave 4 Germany (Likert scale)"
+    wave4_dk: "Wave 4 Denmark (Likert scale)"
+    wave4_ee: "Wave 4 Estonia (Likert scale)"
+  # One representative wave/country sample per country, for the publication
+  # composition chart -- excludes wave2_ch/wave3_ch/wave2_cn since
+  # Switzerland and China already have a representative sample from
+  # another wave (wave1_ch, wave3_cn).
+  composition_waves:
+    wave1_ch: Switzerland
+    wave2_us: United States
+    wave3_cn: China
+    wave4_it: Italy
+    wave4_fr: France
+    wave4_es: Spain
+    wave4_fi: Finland
+    wave4_pl: Poland
+    wave4_nl: Netherlands
+    wave4_de: Germany
+    wave4_dk: Denmark
+    wave4_ee: Estonia
+  # Wave(s) per topic, for the supplementary shape figure -- all countries
+  # within a wave pooled together to represent that topic as a whole.
+  shape_topics:
+    "Swiss decarbonisation": [wave1_ch]
+    "Sustainable aviation": [wave2_ch, wave2_cn, wave2_us]
+    "Carbon storage": [wave3_ch, wave3_cn]
+    "Policy instruments":
+      [wave4_it, wave4_fr, wave4_es, wave4_fi, wave4_pl, wave4_nl, wave4_de, wave4_dk, wave4_ee]
+
+# Confirmatory factor analysis of the justice-principle items (not the LPA
+# indicator scores). wave2 is included only for comparison against
+# wave1_3's Likert items -- its constant-sum items are ipsative and violate
+# the local-independence assumption standard CFA relies on, so its fit
+# indices shouldn't be read as evidence about the theoretical structure,
+# only about how badly the measurement format itself breaks CFA's
+# assumptions.
+cfa:
+  groups:
+    wave1_3: [wave1_ch, wave3_ch, wave3_cn]
+    wave2: [wave2_ch, wave2_cn, wave2_us]
+    wave4: [wave4_it, wave4_fr, wave4_es, wave4_fi, wave4_pl, wave4_nl, wave4_de, wave4_dk, wave4_ee]
+
+regression:
+  random_seed: 42

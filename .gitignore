@@ -2,6 +2,10 @@
 /raw-data
 /data
 /output
+/build
+
+# Snakemake logs
+/.snakemake
 
 # History files
 .Rhistory
