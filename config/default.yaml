@@ -231,3 +231,10 @@ cfa:
 
 regression:
   random_seed: 42
+
+# Wave 3's open-ended "why did you answer this way" justice-reasoning
+# questions -- only wave3_ch/wave3_cn have them. Respondents were randomly
+# shown exactly one of the three context questions (general/tax/subsidy),
+# never more than one.
+open_ended:
+  waves: [wave3_ch, wave3_cn]

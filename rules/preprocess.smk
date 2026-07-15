@@ -11,3 +11,16 @@ rule clean_wave:
     conda: "../environment.yml"
     script:
         "../src/preprocess/clean_survey.py"
+
+
+rule clean_open_ended:
+    message: "Clean open-ended justice-reasoning responses for {wildcards.wave_id}."
+    input:
+        data = "build/data/processed/{wave_id}.parquet"
+    params:
+        country = lambda w: config["waves"][w.wave_id]["country"]
+    output:
+        clean = "build/results/open_ended/{wave_id}_clean.csv"
+    conda: "../environment.yml"
+    script:
+        "../src/preprocess/clean_open_ended.py"

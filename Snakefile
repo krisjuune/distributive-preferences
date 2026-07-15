@@ -23,6 +23,7 @@ rule all:
         "build/figures/lpa_spaghetti_all_waves.png",
         "build/figures/lpa_composition.png",
         "build/figures/lpa_shapes_by_topic.png",
+        expand("build/results/open_ended/{wave_id}_clean.csv", wave_id=config["open_ended"]["waves"]),
 
 
 rule clean:
