@@ -44,6 +44,19 @@ rule cfa:
         "../src/analyse/cfa.R"
 
 
+rule check_open_ended_selection_bias:
+    message: "Check open-ended assignment/response balance against LPA profile for {wildcards.wave_id}."
+    input:
+        open_ended = "build/results/open_ended/{wave_id}_clean.csv",
+        classes = "build/results/lpa/{wave_id}_spaghetti_classes.csv"
+    output:
+        tests = "build/results/open_ended/{wave_id}_selection_bias_tests.csv",
+        rates = "build/results/open_ended/{wave_id}_selection_bias_rates.csv"
+    conda: "../environment.yml"
+    script:
+        "../src/analyse/open_ended_selection_bias.R"
+
+
 rule regression:
     message: "Fit regression model for {wildcards.wave_id}."
     input:

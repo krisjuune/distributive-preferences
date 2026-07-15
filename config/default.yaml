@@ -238,3 +238,27 @@ regression:
 # never more than one.
 open_ended:
   waves: [wave3_ch, wave3_cn]
+  # Stratified (country x context x profile_class) validation sample for
+  # the human/LLM classification agreement check. Utilitarian is
+  # deliberately oversampled relative to its true population share -- it
+  # both responds to the open-ended questions less often (see the
+  # selection-bias check) and is the profile the CFA/bifactor work found
+  # weakest, so it's the cell validation needs the most power in.
+  validation:
+    random_seed: 42
+    n_per_cell:
+      Egalitarian: 8
+      Universalist: 8
+      Utilitarian: 14
+    # Pinned snapshot (not a "latest" alias) so re-running the translation
+    # step later reproduces the same output rather than silently picking
+    # up a newer model. Translation quality matters less than for the
+    # actual classification, so this deliberately uses the cheap/fast
+    # tier rather than the "not cheapest" model chosen for classification.
+    translation_model: "claude-haiku-4-5-20251001"
+  # LLM classification is not wired into `rule all` by default -- it costs
+  # money and isn't bit-reproducible the way the rest of the pipeline is.
+  # Flip enabled to true (once the validation step above has been run and
+  # a model tier chosen) to include it in a default pipeline run.
+  llm_classification:
+    enabled: false

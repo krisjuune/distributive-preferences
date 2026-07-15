@@ -24,6 +24,21 @@ rule all:
         "build/figures/lpa_composition.png",
         "build/figures/lpa_shapes_by_topic.png",
         expand("build/results/open_ended/{wave_id}_clean.csv", wave_id=config["open_ended"]["waves"]),
+        expand("build/results/open_ended/{wave_id}_selection_bias_tests.csv", wave_id=config["open_ended"]["waves"]),
+        "build/results/open_ended/validation_sample_full.csv",
+        "build/results/open_ended/validation_sample_blind.csv",
+        # LLM classification targets are appended below, gated on
+        # open_ended.llm_classification.enabled -- it costs money and
+        # isn't bit-reproducible the way the rest of this list is, so it
+        # stays opt-in rather than part of the unconditional default run.
+        *(
+            expand(
+                "build/results/open_ended/{wave_id}_llm_labels.csv",
+                wave_id=config["open_ended"]["waves"],
+            )
+            if config["open_ended"]["llm_classification"]["enabled"]
+            else []
+        ),
 
 
 rule clean:

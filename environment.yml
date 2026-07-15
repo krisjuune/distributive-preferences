@@ -30,3 +30,4 @@ dependencies:
   - r-magick
   - pip:
       - snakemake
+      - anthropic
