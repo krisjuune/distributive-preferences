@@ -96,3 +96,83 @@ rule plot_regression:
     conda: "../environment.yml"
     script:
         "../src/vis/plot_regression.R"
+
+
+rule plot_regression_probability_grid:
+    message: "Plot composite predicted-probability grid across value indices and samples."
+    input:
+        models = expand(
+            "build/results/regression/{wave_id}_model.rds",
+            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]]
+        ),
+        model_data = expand(
+            "build/results/regression/{wave_id}_model_data.rds",
+            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]]
+        )
+    params:
+        row_labels = [row["label"] for row in config["regression"]["probability_grid"]["rows"]],
+        row_wave_ids = [row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]],
+        col_labels = [col["label"] for col in config["regression"]["probability_grid"]["columns"]],
+        col_predictors = [col["predictor"] for col in config["regression"]["probability_grid"]["columns"]],
+        n_boot = config["regression"]["bootstrap"]["reps"],
+        ci_level = config["regression"]["bootstrap"]["ci_level"],
+        random_seed = config["regression"]["random_seed"],
+        fig_width = 12,
+        fig_height = 8
+    output:
+        figure = "build/figures/regression_probability_grid.png"
+    conda: "../environment.yml"
+    script:
+        "../src/vis/plot_regression_probability_grid.R"
+
+
+rule plot_regression_probability_grid_worldviews:
+    message: "Plot composite predicted-probability grid for cultural worldviews and energy security."
+    input:
+        models = expand(
+            "build/results/regression/{wave_id}_model.rds",
+            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]]
+        ),
+        model_data = expand(
+            "build/results/regression/{wave_id}_model_data.rds",
+            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]]
+        )
+    params:
+        row_labels = [row["label"] for row in config["regression"]["probability_grid_worldviews"]["rows"]],
+        row_wave_ids = [row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]],
+        col_labels = [col["label"] for col in config["regression"]["probability_grid_worldviews"]["columns"]],
+        col_predictors = [col["predictor"] for col in config["regression"]["probability_grid_worldviews"]["columns"]],
+        n_boot = config["regression"]["bootstrap"]["reps"],
+        ci_level = config["regression"]["bootstrap"]["ci_level"],
+        random_seed = config["regression"]["random_seed"],
+        fig_width = 12,
+        fig_height = 16 / 3  # one row vs. the main grid's three, but doubled so panels aren't too squashed
+    output:
+        figure = "build/figures/regression_probability_grid_worldviews.png"
+    conda: "../environment.yml"
+    script:
+        "../src/vis/plot_regression_probability_grid.R"
+
+
+rule plot_regression_probability_surface:
+    message: "Plot 2D predicted probability surface for {params.focal_profile}."
+    input:
+        models = expand(
+            "build/results/regression/{wave_id}_model.rds",
+            wave_id=config["regression"]["probability_surface"]["wave_ids"]
+        ),
+        model_data = expand(
+            "build/results/regression/{wave_id}_model_data.rds",
+            wave_id=config["regression"]["probability_surface"]["wave_ids"]
+        )
+    params:
+        wave_ids = config["regression"]["probability_surface"]["wave_ids"],
+        x_predictor = config["regression"]["probability_surface"]["x_predictor"],
+        y_predictor = config["regression"]["probability_surface"]["y_predictor"],
+        focal_profile = config["regression"]["probability_surface"]["focal_profile"],
+        country_labels = config["regression"]["probability_surface"]["country_labels"]
+    output:
+        figure = "build/figures/regression_probability_surface.png"
+    conda: "../environment.yml"
+    script:
+        "../src/vis/plot_regression_probability_surface.R"

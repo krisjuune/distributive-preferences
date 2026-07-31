@@ -5,8 +5,22 @@ include: "rules/analyse.smk"
 include: "rules/vis.smk"
 
 wildcard_constraints:
-    wave_id = "|".join(config["waves"].keys()),
+    # Includes regression.groups' pooled unit names (e.g. "wave4_eu") --
+    # the `regression` rule's output is keyed on {wave_id} whether it
+    # names an individual wave or a pooled group, see rules/analyse.smk.
+    wave_id = "|".join(list(config["waves"].keys()) + list(config["regression"]["groups"].keys())),
     cfa_group = "|".join(config["cfa"]["groups"].keys())
+
+
+# Wave 4's 9 individual countries are pooled into regression.groups.wave4_eu
+# (see rules/analyse.smk's `regression` rule) rather than regressed/plotted
+# per-country -- individual countries run as small as ~100-250 respondents
+# post listwise deletion, too little for a stable fit. The rule itself can
+# still produce a per-country wave4 regression if directly requested; this
+# list just controls what `rule all` builds by default.
+_individual_regression_waves = [
+    wave_id for wave_id, meta in config["waves"].items() if meta["topic"] != "policy-instruments"
+]
 
 
 rule all:
@@ -28,6 +42,12 @@ rule all:
         expand("build/results/open_ended/{wave_id}_selection_bias_tests.csv", wave_id=config["open_ended"]["waves"]),
         "build/results/open_ended/validation_sample_full.csv",
         "build/results/open_ended/validation_sample_blind.csv",
+        expand("build/results/regression/{wave_id}_coefficients.csv", wave_id=_individual_regression_waves),
+        expand("build/results/regression/{wave_id}_coefficients.csv", wave_id=config["regression"]["groups"].keys()),
+        "build/figures/regression_probability_surface.png",
+        "build/figures/regression_probability_grid.png",
+        "build/figures/regression_probability_grid_worldviews.png",
+
         # LLM classification targets are appended below, gated on
         # open_ended.llm_classification.enabled -- it costs money and
         # isn't bit-reproducible the way the rest of this list is, so it

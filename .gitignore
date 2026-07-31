@@ -213,3 +213,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Manual files created for the manuscript
+manuscript/
