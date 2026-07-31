@@ -17,9 +17,18 @@ classes_files <- snakemake@input[["classes"]]
 wave_to_country <- unlist(snakemake@params[["wave_to_country"]])
 wave_ids <- gsub("_spaghetti_classes\\.csv$", "", basename(classes_files))
 
+# wave2_us is the only constant-sum (points-allocation) sample among the
+# composition countries -- every other one uses the Likert scale. Flagged
+# on the axis label with an asterisk (explained in the surrounding text,
+# not on the plot itself).
+constant_sum_wave_ids <- c("wave2_us")
+
 class_sizes <- bind_rows(lapply(seq_along(classes_files), function(i) {
+  wave_id <- wave_ids[i]
+  country <- wave_to_country[[wave_id]]
+  if (wave_id %in% constant_sum_wave_ids) country <- paste0(country, "*")
   read_csv(classes_files[i], show_col_types = FALSE) |>
-    mutate(country = wave_to_country[[wave_ids[i]]])
+    mutate(country = country)
 })) |>
   mutate(profile_class = factor(profile_class, levels = principle_order)) |>
   count(country, profile_class, name = "n", .drop = FALSE) |>
@@ -41,18 +50,16 @@ p <- ggplot(class_sizes, aes(x = country, y = pct, fill = profile_class)) +
     position = position_stack(vjust = 0.5), size = 3, color = "black"
   ) +
   coord_flip() +
-  scale_fill_manual(values = justice_palette) +
+  scale_fill_manual(values = justice_palette, guide = guide_legend(reverse = TRUE)) +
   scale_y_continuous(expand = c(0, 0)) +
-  labs(
-    title = "Utilitarian justice orientation is a minority view everywhere",
-    subtitle = "Share of respondents in each latent profile class, by country",
-    x = NULL, y = "Share of respondents (%)", fill = "Profile"
-  ) +
+  labs(x = NULL, y = "Share of respondents (%)", fill = "Profile") +
   theme_classic(base_size = 12) +
   theme(
     legend.position = "bottom",
-    plot.title = element_text(face = "bold", size = 13),
-    plot.subtitle = element_text(color = "grey30")
+    # Zero expansion on the (post-flip) x axis puts the "100" tick right at
+    # the panel edge -- without extra right-hand margin its label gets
+    # clipped by the saved image's bounding box.
+    plot.margin = margin(t = 5.5, r = 12, b = 5.5, l = 5.5)
   )
 
 ggsave(snakemake@output[["figure"]], p, width = 8, height = 6, dpi = 200)

@@ -231,6 +231,72 @@ cfa:
 
 regression:
   random_seed: 42
+  # Pooled multi-country regressions -- gives small-sample countries more
+  # stable estimates than a per-country fit can support (wave 4 countries
+  # run as low as ~100-250 respondents, ~10-40 Utilitarian). `country` is
+  # added automatically as a control predictor whenever a group is fit
+  # (see regression.R). Every wave_id in a group must share one topic.
+  groups:
+    wave4_eu: [wave4_it, wave4_fr, wave4_es, wave4_fi, wave4_pl, wave4_nl, wave4_de, wave4_dk, wave4_ee]
+  # nnet::multinom's built-in ridge-type penalty -- tempers residual
+  # quasi-complete separation (huge/infinite odds ratios) in small
+  # samples with a rare outcome category, e.g. wave 4's per-country
+  # models. Verified against the worst observed case (wave4_fi): 0.1
+  # brings the max odds ratio from 216 down to ~30 without visibly
+  # changing the already well-behaved wave 1-3 estimates.
+  decay: 0.1
+  # Nonparametric bootstrap settings for the predicted-probability
+  # confidence bands (see regression_probability_helpers.R) -- resample
+  # respondents with replacement, refit, predict on the same grid, and
+  # take the ci_level empirical percentile of the resulting curves.
+  bootstrap:
+    reps: 200 # reasonable speed/precision tradeoff for models this size (each refit takes well under a second)
+    ci_level: 0.95
+  # Composite predicted-probability grid: rows are samples, columns are the
+  # three dimensions of ideology shared by every sample (economic,
+  # cultural, ecological) -- fully populated, no empty cells.
+  probability_grid:
+    rows:
+      - label: Europe
+        wave_id: wave4_eu
+      - label: Switzerland
+        wave_id: wave3_ch
+      - label: China
+        wave_id: wave3_cn
+    columns:
+      - label: Economic values
+        predictor: socio_econ_index
+      - label: Cultural values
+        predictor: socio_cult_index
+      - label: Ecological concern
+        predictor: socio_ecol_index
+  # Second composite grid: cultural worldviews (Kahan's individualism-
+  # communitarianism/hierarchy-egalitarianism) and energy security concern
+  # -- wave4-only constructs with no wave3 equivalent, so a single row
+  # rather than empty cells elsewhere.
+  probability_grid_worldviews:
+    rows:
+      - label: Europe
+        wave_id: wave4_eu
+    columns:
+      - label: Individualism-communitarianism
+        predictor: cultural_worldview_ic_index
+      - label: Hierarchy-egalitarianism
+        predictor: cultural_worldview_he_index
+      - label: Energy security concern
+        predictor: energy_security_index
+  # 2D predicted-probability surface (P(focal_profile) over a grid of two
+  # predictors, faceted by country) -- tests whether the two predictors'
+  # effects on profile membership are additive or interactive.
+  probability_surface:
+    wave_ids: [wave4_eu, wave3_ch, wave3_cn]
+    x_predictor: socio_ecol_index
+    y_predictor: socio_econ_index
+    focal_profile: Utilitarian
+    country_labels:
+      wave4_eu: Europe
+      wave3_ch: Switzerland
+      wave3_cn: China
 
 # Wave 3's open-ended "why did you answer this way" justice-reasoning
 # questions -- only wave3_ch/wave3_cn have them. Respondents were randomly

@@ -57,15 +57,41 @@ rule check_open_ended_selection_bias:
         "../src/analyse/open_ended_selection_bias.R"
 
 
+def _regression_units(config):
+    """Map every requestable {wave_id} value -- individual waves and
+    regression.groups' pooled unit names alike -- to the list of actual
+    wave_ids it covers."""
+    units = {wave_id: [wave_id] for wave_id in config["waves"]}
+    units.update(config["regression"]["groups"])
+    return units
+
+
+def _regression_wave_ids(wildcards):
+    return _regression_units(config)[wildcards.wave_id]
+
+
 rule regression:
     message: "Fit regression model for {wildcards.wave_id}."
     input:
-        data = "build/data/processed/{wave_id}.parquet",
-        classes = "build/results/lpa/{wave_id}_classes.csv"
+        data = lambda w: expand(
+            "build/data/processed/{wid}.parquet", wid=_regression_wave_ids(w)
+        ),
+        # Fixed-G=3 classes, not each wave's own BIC-optimal classes --
+        # profile_class needs to mean the same thing across waves/countries
+        # for the coefficients to be comparable, consistent with every
+        # other cross-wave figure in this pipeline.
+        classes = lambda w: expand(
+            "build/results/lpa/{wid}_spaghetti_classes.csv", wid=_regression_wave_ids(w)
+        )
     params:
-        random_seed = config["regression"]["random_seed"]
+        random_seed = config["regression"]["random_seed"],
+        decay = config["regression"]["decay"],
+        wave_ids = _regression_wave_ids,
+        topics = {wave_id: meta["topic"] for wave_id, meta in config["waves"].items()},
+        countries = {wave_id: meta["country"] for wave_id, meta in config["waves"].items()}
     output:
         model = "build/results/regression/{wave_id}_model.rds",
+        model_data = "build/results/regression/{wave_id}_model_data.rds",
         coefficients = "build/results/regression/{wave_id}_coefficients.csv"
     conda: "../environment.yml"
     script:
