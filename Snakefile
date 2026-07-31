@@ -15,6 +15,7 @@ rule all:
     input:
         expand("build/data/processed/{wave_id}.parquet", wave_id=config["waves"].keys()),
         expand("build/results/lpa/{wave_id}_fit_stats.csv", wave_id=config["waves"].keys()),
+        expand("build/results/lpa/{wave_id}_blrt.csv", wave_id=config["waves"].keys()),
         expand("build/results/cfa/{cfa_group}_fit_measures.csv", cfa_group=config["cfa"]["groups"].keys()),
         expand("build/figures/cfa_{cfa_group}_four_factor.png", cfa_group=config["cfa"]["groups"].keys()),
         expand("build/figures/cfa_{cfa_group}_two_factor.png", cfa_group=config["cfa"]["groups"].keys()),

@@ -13,6 +13,21 @@ rule lpa:
         "../src/analyse/lpa.R"
 
 
+rule lpa_blrt:
+    message: "Bootstrapped LRT for profile count ({wildcards.wave_id})."
+    input:
+        data = "build/data/processed/{wave_id}.parquet"
+    params:
+        nboot = config["lpa"]["blrt"]["nboot"],
+        max_g = config["lpa"]["blrt"]["max_g"],
+        random_seed = config["lpa"]["random_seed"]
+    output:
+        blrt = "build/results/lpa/{wave_id}_blrt.csv"
+    conda: "../environment.yml"
+    script:
+        "../src/analyse/lpa_blrt.R"
+
+
 rule lpa_fixed_g:
     message: "Fit a fixed-G latent profile model for {wildcards.wave_id} (cross-wave comparison)."
     input:

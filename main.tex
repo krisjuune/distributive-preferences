@@ -1,0 +1,327 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{setspace}
+\onehalfspacing % set line spacing
+\usepackage{indentfirst} % indent first paragraph of section
+\usepackage[paper=a4paper,margin=1in]{geometry} 
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+\usepackage{booktabs} % for neat tables
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+\setlength\lightrulewidth{0.3pt} % decreasing the width of the midrule in tables
+\usepackage{tabularx} % for fixed column width in tables
+\usepackage{float} % for fixed tables and figures in terms of position in text
+\usepackage{multirow}
+\usepackage{lineno}
+\usepackage{amsmath}
+\usepackage{mhchem}
+\usepackage{xr-hyper}
+\usepackage{hyperref} 
+\usepackage{orcidlink}
+
+% \linenumbers
+\pagenumbering{arabic}
+\newcommand{\coo}{\ensuremath{\mathrm{CO_2}}}
+\usepackage[
+    backend=biber,
+    style=numeric,
+    autocite=superscript,
+    sorting=none,
+    maxcitenames=2,
+    maxbibnames=10,
+    giveninits=true,
+    doi=true,
+    isbn=false,
+    url=false,
+    date=year
+]{biblatex}
+\newcommand*{\bibtitle}{Works Cited}
+\DeclareNameAlias{default}{last-first}
+\renewcommand*{\bibfont}{\raggedright\small}
+\addbibresource{cjo.bib}
+\externaldocument[supp:]{supplementary-materials}
+
+
+
+\begin{document}
+
+\singlespacing
+\begin{center}
+    \Large
+    \textbf{People don't optimise: The prevalence of non-utilitarian thinking in climate policy}
+    \\
+    \vspace{4mm}
+    \normalsize Kristiina Joon\textsuperscript{1,2*}\orcidlink{0009-0000-0754-6899}, Zoë Krzyzanowski\textsuperscript{3}, Veronika Schick\textsuperscript{1}, Susanne Hanger-Kopp\textsuperscript{1,4}, Aline Bartenstein\textsuperscript{5, 6}, Franziska Bold\textsuperscript{5}, Johan Liliestam\textsuperscript{5}, Tim Tröndle\textsuperscript{1}, Anthony Patt\textsuperscript{1}
+\end{center}
+
+
+{
+\footnotesize
+
+\begin{enumerate}
+    \item Institute for Environmental Decisions, ETH Zurich, Zurich, Switzerland
+    \item Department of Economics, University of Oxford, Oxford, United Kingdom
+    \item Department of Psychology, University of Zurich, Zurich, Switzerland
+    \item Equity and Justice Research Group, International Institute for Applied Systems Analysis, Laxenburg, Austria
+    \item Chair for Sustainability Transition Policy, School of Business, Economics and Society, Friedrich Alexander University Erlangen-Nuremberg, Nuremberg, Germany
+    \item Institute for Peace Research and Security Policy, University of Hamburg, Hamburg, Germany
+\end{enumerate}
+
+\noindent \textsuperscript{*}Correspondence: \href{mailto:kristiina.joon@usys.ethz.ch}{kristiina.joon@usys.ethz.ch}
+}
+
+\subsection*{Abstract}
+\small
+% Decarbonisation raises complex questions on the distribution of its costs and benefits. Justice is a key driver for environmental policy support, with citizens more likely to back policies they perceive as just. Conversely, policies perceived as unjust can face political backlash. There is limited understanding of what citizens consider just. Here we aim to address this gap by developing a validated scale to measure citizens' justice preferences on climate change mitigation, which can be used by other researchers in the field. We use data from multiple online surveys with representative samples in Switzerland, China, and the US ($N = 8,641$), accompanied by interview data with Swiss members of the public to evaluate the content and construct validity of the scale. The climate justice orientation (CJO) scale assesses agreement with four distributive justice principles: egalitarianism, sufficientarianism, limitarianism, and utilitarianism. The analysis of survey data has shown that whilst there are differences between countries, utilitarianism as a principle for decarbonisation is the least popular with the vast majority of people preferring distribution-sensitive principles. Additionally, we identify values and socio-demographic characteristics that predict climate justice orientation. The climate justice orientation scale can be used by researchers across climate-related fields. 
+
+% new version
+Effective just transition policies depend not only on their technical design but on public acceptance, and acceptance is shaped by whether citizens perceive the distribution of costs and benefits as fair. Yet policymakers rarely have systematic evidence on what the public actually considers fair in the climate mitigation context. This paper presents the Climate Justice Orientation (CJO) scale, a validated survey instrument measuring agreement with four distributive justice principles, egalitarianism, sufficientarianism, limitarianism, and utilitarianism, as applied to concrete climate policy instruments including carbon taxes and green technology subsidies. Drawing on data from twelve countries across three continents (N=14,491), we apply latent profile analysis to identify distinct justice orientation profiles and examine their sociodemographic and value predictors. Across all contexts, we find that the utilitarian principle, minimising aggregate costs regardless of distributional consequences, is consistently the least popular orientation, while the majority of citizens hold distribution-sensitive preferences. However, the specific configuration of distributive preferences varies systematically across countries and along political and socioeconomic lines, with implications for which just transition instruments are likely to command public legitimacy. These findings suggest that the dominant efficiency rationale in climate finance and policy design is out of step with public values in most of the countries studied. The CJO scale offers researchers and policymakers a ready-to-use tool for integrating distributional justice preferences into climate policy design and evaluation.
+
+\vspace{1cm}
+\section*{Introduction}
+\normalsize
+% distribution matters
+Mitigation of climate change inherently raises complex questions on justice that are rarely dealt with explicitly. Decarbonisation implies a distribution of costs and benefits, which at least in democratic societies, needs to be acceptable to the public. % mention also already known findings like distributive preferences are linked to policy preferences \autocite{joon2026}, backlash if distribution deemed unfair, like the yellow vests \autocite{patterson2023}
+
+% maybe more background here on distribution of policy costs and benefits
+
+% fairness and acceptance research to date: acceptance one of the biggest policy hurdles to implementation, fairness shown to be one of the most important, if not the most important, determinants of acceptance, and yet fairness is rarely decomposed to further concepts
+
+% existing measurement scales (might need to be restructured or shortened)
+Recently, scholars have already begun using distributional justice principles as a way of systematising some justice concepts in climate literature \autocite{devries2024, torne2024, heyen2023, jafino2021}, though the literature varies on which principles are used and how support for principles is measured. These concepts are philosophical and rarely reflect real-world tradeoffs, making it unlikely for any given policy or approach to follow a single principle but rather a combination of a few. In response to different distributional justice principles with numerous operationalisations for the same principle, Hülle et al. (2018) developed a short tool, the Basic Social Justice Orientation (BSJO) scale, for measuring distributional justice preferences for the equality (equal treatment), equity (equal outcomes), merit, and need principles. The BSJO has found widespread use in survey research, including in the eighth round of the European Social Survey, though it has been criticised by its simplicity and inaccuracy in the translation of support for the BSJO statements to the concepts behind them (Van Hootegem et al., 2021).  
+
+Whilst the concepts are transferable between social welfare and the climate literature, the relevance of the principles is context specific. Additionally, the distributive preferences assessed with such scales also differ between contexts, calling for a new tool to assess justice orientation regarding climate mitigation. Following the BSJO scale, we have preliminarily termed the tool being developed in this project as the Climate Justice Orientation (CJO) scale. The proposed scale measures agreement with four distributional justice principles; equal outcomes, utilitarianism, sufficientarianism, and limitarianism. These principles are directly relevant to the decarbonisation context (Zimm et al., 2024) and they result in distinct patterns of distribution, which were the two criteria in developing the tool. While this project focuses on developing a tool to measure distributional preferences in the mitigation context, a possible extension would be extending the tool to the adaptation context. The relevant principles as well as the preferences of the public are likely to differ between contexts.  
+
+% research gap, question, and how we address it --> cross-national and cross-sectional survey with a total N = ... 
+
+% contribution: mention both the new measurement scale and the substantive finding
+Simply put, the distributive principles of the public matter – they are a key driver of public support for policies and go a long way in explaining why some policy projects succeed and others fail. The CJO scale is a first attempt to systematically assess these preferences in the climate context and develop a ready-to-use tool for researchers in future survey research. % substantive finding missing
+
+\section*{Methods}
+
+% Restructured per earlier TODO: (1) Data collection; (2) Climate justice orientation scale development -- scale content and development process, followed by CFA, interview, and open-ended validation subsections; (3) Analytic strategy, now covering only the substantive-results analyses (LPA solution selection, predictors of profile membership).
+
+This study examines how citizens across diverse national contexts reason about the distribution of climate policy costs and benefits, who should pay, who should benefit, and on what grounds such allocations count as fair.
+To address this, we developed the Climate Justice Orientation (CJO) scale and deployed it across four waves of large-scale online surveys spanning twelve countries (total $N = 15,265$), supplemented by semi-structured interviews ($N = 21$) to validate the scale's content.
+Our evidence strategy proceeds in three steps: observational survey data across many countries and waves first establish that distributive justice preferences are measurable as a small number of coherent orientations; confirmatory factor analysis then establishes the scale's psychometric structure; and qualitative evidence, interviews and open-ended survey responses, independently validates what the scale's principles capture, by testing whether they correspond to how people spontaneously reason about fairness.
+
+All studies were approved by ETH Zurich and FAU Erlangen-Nuremberg ethics boards before any involvement of human participants.
+The recruitment of both the survey and interview respondents was conducted through Bilendi, an ISO 20252-certified panel provider.
+All respondents were 18 years or older.
+The quantitative and qualitative components of this study were preregistered on the Open Science Framework (quantitative: \href{https://osf.io/qtxg7/overview}{osf.io/qtxg7/overview}; qualitative: \href{https://osf.io/cerf4/overview}{osf.io/cerf4/overview}).
+
+\subsection*{Data collection}
+The first three waves established the scale's psychometric properties and tested it across three culturally and institutionally diverse countries; Wave 4 extended data collection across nine further European countries. Across all waves, respondents were recruited through Bilendi, an ISO 20252-certified panel provider, provided informed consent before participating, took part voluntarily, and were reimbursed for their time. In every wave, age and gender quotas were implemented as a single cross-quota, i.e. joint quota cells combining age and gender categories, rather than two independently balanced marginal quotas.
+
+Wave 1 (Switzerland, Likert format, $n = 2,230$; fielded May 2024) was the primary scale-development dataset and is reported separately \autocite{joon2026}. The survey was developed in English and translated into German, French, and Italian, and combined the CJO scale with two conjoint experiments (on decarbonising the heating sector and on scaling up renewable energy production) not analysed in this paper. Sampling used a non-probability quota-based design, nationally representative on the age$\times$gender cross-quota and on language region (German-speaking $n = 1,511$; French-speaking $n = 611$; Italian-speaking $n = 97$; Romansh-speaking $n = 11$), with all quota categories falling within 3\% of national statistics. Two exclusion criteria were applied: response duration below 45\% of the median completion time (median: 10 min 25 s), and straightlining, defined as identical answers across twelve consecutive Likert-scale items in the CJO section.
+
+Wave 2 (Switzerland, China, United States; constant-sum format, $n = 3,454$; fielded November--December 2024) tested an alternative elicitation method and extended data collection to two further countries. It was fielded via Qualtrics, offered in English (US), Simplified Chinese (China), and German, French, and English (Switzerland). Sampling used the age$\times$gender cross-quota in all three countries, with additional quotas on the German- and French-speaking regions within Switzerland. Three trap-question attention checks assessed reading comprehension, task comprehension, and concept comprehension respectively; failing any one resulted in exclusion.
+
+Wave 3 (Switzerland, $n = 1,456$; China, $n = 1,496$; Likert format; fielded February 2025) served as the confirmatory factor analysis holdout dataset and extended the predictor set beyond socio-demographic variables to include ideological values, socio-economic left–right and socio-cultural GAL–TAN positioning \autocite{jolly2022,bornschier2021,johnston2020}, and climate scepticism. Sampling used the age$\times$gender cross-quota, with additional quotas on the German- and French-speaking regions in Switzerland, given prior evidence of distinct regional preferences in this context \autocite{joon2026}. The same three attention checks used in Wave 2 were applied, with failure on any one resulting in exclusion. All respondents were 18 years or older and resident in either Switzerland or China.
+
+Wave 4 (nine European countries, Likert format, extended 16-item scale; $n = 6,629$) was fielded across Italy, France, Spain, Finland, Poland, the Netherlands, Germany, Denmark, and Estonia (country-level $n$ ranging from 549 in Estonia to 848 in Italy), selected to span variation in welfare-state type, political culture, and national carbon policy context. Sampling used the age$\times$gender cross-quota as a hard quota, and education as a soft quota. [FILL IN -- full Wave 4 quota targets/data sources not yet documented.] Three attention checks were included; respondents failing two or more of the three were screened out -- a stricter threshold than the any-one-failure exclusion used in Waves 2 and 3. [CHECK whether this difference in threshold across waves is intentional and should be flagged in the write-up, or whether it should be harmonised for comparability.]
+
+Response validity was additionally assessed via the survey platform's completion status field; only sessions that reached the end of the survey flow and were flagged complete, excluding quality-fail and screen-out cases within completed sessions and sessions that never finished, were retained.
+
+
+\subsubsection*{Qualitative data collection}
+
+To establish that the principles operationalised by the CJO scale correspond to how lay people actually reason about climate justice, and that the scale's items are understood as intended, we conducted semi-structured online interviews ($n = 21$) with German-speaking Swiss residents.
+Interviews opened with open questions about what fairness means to participants in the context of climate policy (e.g., "What would be a just way to implement climate mitigation policies for you?"), allowing justice principles to emerge without being prompted by the scale itself.
+In the second part of each interview, participants completed the CJO scale while thinking aloud, revealing where items were understood clearly, where they were ambiguous, and where they felt redundant.
+This two-part structure serves two distinct analytic purposes: the open questions establish content validity, by testing whether unprompted reasoning maps onto the scale's four principles; the think-aloud protocol establishes item-level construct validity, by testing whether individual items are interpreted as intended.
+
+Participants were recruited via Bilendi, with no domain-specific screening beyond a minimum age of 18 and fluency in German.
+[FILL IN — demographic summary: age, gender, income.]
+
+\subsection*{Climate justice orientation scale development}
+
+The CJO scale measures agreement with four distributive justice principles: utilitarianism (minimise total costs, distribution-insensitive), equal outcomes (egalitarianism; reduce existing inequality), sufficientarianism (guarantee a minimum standard for all), and limitarianism (a cap on excess).
+These four principles were selected because they are directly relevant to how the costs and benefits of climate policy can be allocated \autocite{zimm2024} and because, jointly, they produce distinct distributional patterns that let us discriminate between substantively different justice orientations rather than placing respondents on a single liberal–conservative axis.
+The theoretical contrast the paper's central finding turns on is that utilitarianism is distribution-blind, evaluating a policy solely by its aggregate cost, irrespective of who bears it, whereas the other three principles are each distribution-sensitive in a different way, specifying equality, sufficiency, or a ceiling on excess as the criterion for a fair spread of costs and benefits.
+Scale development followed established best-practice guidance for multi-phase psychometric instrument construction \autocite{boateng2018}.
+
+% TODO: describe the actual process of scale development here (item generation, expert/stakeholder review, pilot testing, iterations between waves) -- currently only the best-practice guidance followed is named, not the process itself.
+
+The CJO scale is positioned relative to three existing approaches.
+The BSJO scale \autocite{hulle2018} captures general social justice orientations but is not specific to climate or environmental contexts, and has itself been criticised on the fit between its items and the concepts they are meant to measure \autocite{hootegem2021}.
+De Vries et al. (2024) operationalise a similar set of principles through a different measurement approach \autocite{devries2024}.
+Joon et al. (2026) \autocite{joon2026} introduced an earlier version of the present scale using Wave 1 data alone; this paper extends that instrument across three further waves, twelve countries, and extensions and modifications to the scale.
+
+Each principle is assessed across multiple policy contexts, so that a respondent's principle preference is not conflated with a reaction to any single scenario.
+Waves 1–3 assess each principle across three contexts, the general energy transition, carbon taxation, and subsidies, for 12 items total; Wave 4 adds a fossil fuel ban context, for a total of 16 items.
+Items take the form of incomplete sentences anchored in concrete policy scenarios, answered on a 6-point Likert scale in Waves 1 and 3, and a 7-point Likert scale in Wave 4.
+Wave 2 instead used a constant-sum format, in which participants distributed a fixed budget of points across the four principles within each context, included specifically to test how the elicitation format itself shapes apparent preferences, by direct comparison against the Likert-format waves.
+
+Context order was randomised in Wave 1; because no ordering effects were detected, order was fixed in subsequent waves.
+The scale was translated into all languages relevant to the fielded countries following a back-translation protocol; translation files are provided in the supplementary materials.
+
+\subsubsection*{Confirmatory factor analysis}
+Confirmatory factor analysis (CFA) was conducted in R using the {lavaan} package \autocite{rosseel2012}, using robust maximum likelihood (MLR) estimation, appropriate for ordered Likert-type data.
+
+Three competing measurement models were specified: a four-factor correlated-traits model corresponding to the scale's four justice principles (the model of primary interest); a two-factor model contrasting the distribution-insensitive (utilitarian) items against the pooled distribution-sensitive (egalitarian, sufficientarian, limitarian) items; and a bifactor model adding a general fairness-endorsement factor, orthogonal to the four specific factors, to test whether a shared response tendency (e.g. acquiescence) accounts for the specific factors' intercorrelations.
+Each model was fit on the pooled Waves 1 and 3 data (Likert items; $n = 5{,}177$ after listwise deletion of 5 respondents [0.1\%] with a missing justice item) and on the Wave 4 data (extended 16-item scale; $n = 4{,}290$ after listwise deletion of 2{,}339 respondents [35.3\%] with a missing justice item).
+Wave 2's constant-sum items produced a non-positive-definite sample covariance matrix, so none of the three models could be fit to Wave 2 at all; this is an expected consequence of the constant-sum (ipsative) response format, which structurally violates the local-independence assumption CFA relies on, and is reported here only as a methodological note rather than a fit result.
+The four-factor solution on the pooled Waves 1 and 3 sample is the model of central theoretical interest and is reported in full below; the four- and two-factor model results for the Wave 4 data, and the two-factor model results for the pooled Waves 1 and 3 data, are reported in the supplementary materials.
+% [CHECK — Wave 4's listwise-deletion rate (35.3\%) is far higher than Waves 1/3's (0.1\%); confirm whether this reflects genuine non-response/skip logic in Wave 4 fielding or an item-naming/harmonisation mismatch in \texttt{harmonise\_justice\_columns()}, since a merge issue would silently bias the Wave 4 CFA sample.]
+
+For the four-factor model, absolute fit fell outside conventional acceptability thresholds (CFI/TLI $\geq$ .95; RMSEA/SRMR $\leq$ .06--.08) in both wave groups: CFI = .753, TLI = .660, RMSEA = .123, SRMR = .076 (Waves 1+3, $\chi^2_{(48)}$ = 2736.2, $p<.001$); CFI = .697, TLI = .629, RMSEA = .127, SRMR = .092 (Wave 4, $\chi^2_{(98)}$ = 5010.7, $p<.001$).
+These indices should be read against sample size: $\chi^2$ and RMSEA are both known to be oversensitive at $n$ in the thousands, essentially guaranteeing formal rejection of any model with real-world levels of item noise [CITE], so the fit statistics on their own are less diagnostic here than they would be at typical psychometric sample sizes; the two-factor comparison, reported in full in the supplementary materials, showed the four-factor model fit marginally better by AIC/BIC in both wave groups ($\Delta$AIC = 362 and 346 respectively, four-factor lower).
+The bifactor model failed to converge in both wave groups.
+
+Standardised loadings on the four specific factors were moderate, ranging .27--.65 across both wave groups, with one near-zero exception in Wave 4 (utilitarian $\leftarrow$ justice\_subsidy\_everyone, $\beta = -.02$, the only non-significant loading in either model).
+More informative than the global fit indices, given the sample-size caveat above, are the factors' intercorrelations, which are high regardless of $n$: in Wave 4, all six pairwise factor correlations exceed 1 (range 1.06--1.28); in the pooled Waves 1+3 model, four of six meet or exceed 1 (egalitarian--sufficientarian = 1.17, egalitarian--limitarian = 1.03, sufficientarian--limitarian = .95, utilitarian--sufficientarian = .94), with only utilitarian--egalitarian (.79) and utilitarian--limitarian (.54) comfortably under 1.
+Correlations exceeding 1 are Heywood cases, indicating the four-factor model is not empirically well identified as specified: egalitarian, sufficientarian, and limitarian in particular are not clearly discriminated from one another, whereas utilitarian stays comparatively separable from the other three.
+The bifactor model, including the same four specific factors plus an additional overarching general fairness factor, fails to converge in both wave groups, which is consistent with this latent covariance.
+
+% TODO: interpret these results in prose for the write-up -- in particular, whether the Heywood cases / bifactor non-convergence should be read as evidence that egalitarian, sufficientarian, and limitarian are not empirically distinct from one another (as opposed to from utilitarianism, which stays reasonably separable). This has a direct bearing on how the LPA profiles are interpreted, since the LPA indicators are these same four principle scores.
+
+% TODO -- Scale reliability (McDonald's omega) is claimed in the methods intro above but no script in the pipeline computes it (checked src/analyse/ for an omega/reliability step -- none exists). Either add an omega computation (e.g. via {semTools}'s reliability() or {psych}'s omega(), on the four-factor solution or per subscale) or remove the reliability claim until it is implemented.
+
+% TODO -- cite a source for the large-N sensitivity of chi-square/RMSEA claim above (e.g. Kenny & McCoach 2003, or Chen 2007) and replace the inline [CITE] placeholder with \autocite{...}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{figures/methods/cfa_wave1_3_four_factor.png}
+    \caption{Standardised four-factor CFA solution for the pooled Waves 1 and 3 sample ($n = 5{,}177$). Several inter-factor correlations exceed 1 (Heywood cases), indicating the egalitarian, sufficientarian, and limitarian factors are not well discriminated from one another.}
+    \label{fig:cfa-wave13}
+\end{figure}
+
+\subsubsection*{Qualitative interview validation}
+Interviews were analysed using abductive thematic analysis \autocite{thompson2022,tavory2014}, which was theory-informed by the four justice principles and the wider distributive justice literature, while remaining open to themes emergent in the data but not anticipated by the scale.
+A codebook covering distributive justice, procedural justice, general climate perceptions, and scale-comprehension issues was developed iteratively and applied across all 21 transcripts.
+Coding was conducted by Zoë Krzyzanowski.
+[FILL IN — inter-rater reliability procedure, if one was conducted.]
+The full codebook is available in supplementary information.
+Emergent qualitative themes were compared against LPA profile membership to assess convergent validity, and think-aloud comprehension issues identified during interviews were triangulated against the CFA results to inform recommendations for scale refinement.
+
+% TODO: report interview validation results here (do emergent themes map onto the four principles? which items had comprehension issues in the think-aloud protocol?)
+
+\subsubsection*{Open-ended question validation}
+Wave 3 included one open-ended question per respondent, asking what they consider fair within their randomly assigned policy context (general energy transition, carbon tax, or subsidies); this assignment was confirmed independent of LPA profile membership (CH: $\chi^2$(4) = 5.40, p = .249; CN: $\chi^2$(4) = 3.50, p = .478).
+Responses were classified using a multi-label coding scheme covering the four scale principles (utilitarian, egalitarian, sufficientarian, limitarian), plus other justice related content (justice-relevant reasoning outside the four principles, including polluter-pays/contribution-based reasoning, inter-country equity, and intergenerational equity), not sure (an explicit or implicit "I don't know" response in wording not caught by a fixed phrase list at the data-cleaning stage, which is interpretable, but not evidence for or against any principle), and uninterpretable (no discernible justice-relevant content).
+Classification will be performed using a large language model (Anthropic API, temperature 0, pinned model snapshot) \autocite{kostina2025,vajjala2025,tripp2024}, anchored to the same construct definitions used in the CFA hypotheses to avoid circularity; the classifier sees only the response text and its context label, never the respondent's closed-item scores or LPA profile, so the resulting classification constitutes an independent test of convergent validity \autocite{zollinger2024a}.
+A stratified subsample was human-coded by two independent coders to assess classifier reliability, stratified by country, context, and LPA profile, deliberately oversampling the Utilitarian profile, which both responds to the open-ended question at a lower rate (see below) and showed the weakest measurement properties in the CFA and bifactor analyses. Per-label Cohen's $\kappa$, together with human–human agreement as a benchmark, will be reported once both coders' data are available.
+[STATUS — first coder complete; second coder pending as of writing.]
+
+Only substantive responses (excluding missing, numeric/punctuation-only, non-answer-phrase, and suspected export-artifact responses identified at the data-cleaning stage) were passed to the classifier; the classifier's own uninterpretable label catches a finer-grained second tier of non-signal within this already-cleaned set.
+Utilitarian-profile respondents are significantly less likely to provide a substantive response than Egalitarian-profile respondents, in both countries (CH: 93.0\% vs. 97.4\%; CN: 85.2\% vs. 95.8\%).
+This means that findings of the rarer utilitarian language in the open-ended responses must be read alongside this selection effect.
+
+% TODO: report open-ended validation results here (do the classified principle labels correspond to LPA profile membership? classifier-human agreement once both coders' data are available).
+
+\subsection*{Analytic strategy}
+
+Following validation, latent profile analysis (LPA) was used to characterise the actual distribution of justice orientations in the population.
+LPA is a person-centred approach that groups individuals by their joint pattern of scores across all four principles simultaneously, capturing orientations that comparisons of principle means alone would miss; for instance, a respondent who endorses all four principles moderately is meaningfully different from one who endorses them unevenly, even when the two have similar principle-by-principle averages \autocite{spurk2020,weller2020}.
+The four indicators entering the LPA are the justice-principle scores themselves, i.e. each principle's items summed across its policy-domain contexts (general transition, carbon tax, subsidy, and, in Wave 4, fossil fuel ban), not the raw 12--16 items.
+
+\subsubsection*{Latent profile analysis}
+LPA was implemented directly via the {mclust} package in R \autocite{scrucca2023}, fitting an equal-volume, equal-shape, diagonal-covariance mixture of Gaussians (mclust model \texttt{EEI}: equal variances across profiles, indicators uncorrelated within profile), with no covariates, for candidate profile counts $G = 1$ to $8$ separately in every wave/country sample. No covariates were included at this stage so that profile-count selection would not be confounded by, or conditioned on, the sociodemographic and value variables used later to predict profile membership.
+Model fit was summarised with six information criteria -- AIC, BIC, CAIC, SABIC, AWE, and ICL -- computed directly from each model's log-likelihood, number of parameters, and $n$ using the same formulas as the {tidyLPA} package \autocite{rosenberg2018}, so that every criterion sits on one consistent, lower-is-better scale.
+Wave 2's constant-sum data were included in the LPA for method-comparison purposes but are interpreted with caution, given the ipsative nature of constant-sum responses.
+
+The six fit criteria do not agree on a single optimal $G$, and their disagreement is itself informative. AIC, BIC, SABIC, and AWE decline almost monotonically from $G=1$ through $G=8$ in most wave/country samples -- reaching their minimum at the upper bound of the tested range ($G=8$) in 8 of the 15 samples, with no clear elbow -- unsurprising given sample sizes in the hundreds to thousands, where these criteria's model-complexity penalty is weak relative to the log-likelihood gain from adding another profile. ICL, which penalises poorly separated (low-entropy) classifications more heavily, favours lower $G$ overall but is itself inconsistent across samples: its minimum falls at $G=2$ in 1 sample, $G=3$ in 3 samples, $G=4$ in 6 samples, $G=5$ in 4 samples, and $G=6$ in 1 sample -- $G=4$, not $G=3$, is the single most common ICL-preferred solution.
+
+Because a central aim of this analysis is comparing profile composition across twelve countries and four waves, a single common profile count was needed across all wave/country samples -- optimising $G$ independently per sample would give each country a different number of profiles and make the shares in Figure~\ref{fig:lpa-shares} incomparable. Given that no single criterion converges on one $G$ across samples, we selected the three-profile solution as this common count primarily on interpretability and practical grounds rather than as the fit-index-preferred choice: at $G=3$, entropy ranges from .649 (both China samples, Waves 2 and 3) to .854 (Wave 4 Netherlands) across the 15 wave/country samples, and the smallest profile's share stays above 5\% in 13 of 15 samples (falling to 4.3\% in Wave 4 Netherlands and 3.4\% in Wave 4 Finland). Inspection of the resulting profiles' mean indicator scores also showed three theoretically interpretable and qualitatively distinct orientations at $G=3$ in every sample, labelled Utilitarian, Universalist, and Egalitarian in Figure~\ref{fig:lpa-shares} below.
+
+The BLRT results reinforce this picture rather than resolving it. Across all 15 wave/country samples, the 2-vs-3-profile comparison was significant at the bootstrap resolution floor ($p = .001$, i.e. the observed likelihood-ratio statistic exceeded all 999 bootstrap replicates, in every sample), formally supporting at least three profiles over two everywhere. However, the 3-vs-4-profile comparison was equally significant at $p = .001$ in all 15 samples as well: BLRT does not favour stopping at three profiles over four in any sample. This is consistent with the ICL pattern above and with the same large-sample caveat raised for the CFA fit indices: at these sample sizes (hundreds to thousands per wave/country), BLRT has near-total power to reject the smaller model at successive boundaries, so its significance at 3-vs-4 shows that the test cannot discriminate between them here. Taken together with the fit-index and entropy/group-size evidence above, the three-profile solution is retained as a parsimony and cross-sample-comparability choice.
+
+% fit indices (AIC/BIC/SABIC/AWE/ICL) across candidate profile counts (G = 1-8), all 15 wave/country samples
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/methods/lpa_fit_all_waves.png}
+    \caption{Model-fit statistics (AIC, BIC, SABIC, AWE, ICL) for latent profile solutions with 1 to 8 profiles, fit separately for each of the 15 wave/country samples. Lower values indicate better-fitting/more-parsimonious models. AIC, BIC, SABIC, and AWE decline through most of the tested range without a clear elbow, while ICL, which penalises low classification entropy, tends to reach a minimum at a lower profile count. The three-profile solution used throughout the main text was chosen for comparability across samples (see text) rather than because it uniquely minimises every criterion in every sample.}
+    \label{fig:lpa-fit-indices}
+\end{figure}
+
+% TODO: consider adding a vertical marker/reference line at G=3 to src/vis/plot_lpa_fit_combined.R so the chosen solution is visually locatable in this figure, rather than only described in the caption/text.
+
+% TODO: robustness check with G=4 in all countries and discussion of G=5 in wave 2 samples (get universalist plus one group for each principle): since $G=4$, not $G=3$, is the modal ICL-preferred solution (6 of 15 samples vs. 3 of 15 for $G=3$, a four-profile robustness check is more directly motivated here than an arbitrary alternative would be; the four-profile classification described in the LPA script exists per-wave (\texttt{\{wave\_id\}\_classes.csv}, each wave's own BIC-optimal $G$) but there is currently no fixed-$G=4$ run comparable to the fixed-$G=3$ spaghetti/composition outputs used in the main text -- worth adding before claiming robustness to profile count.]
+
+
+\subsubsection*{Predictors of profile membership}
+To characterise who holds each justice orientation and why, we model the fixed three-profile LPA classification (Utilitarian, Universalist, Egalitarian) as the outcome of a multinomial logistic regression, since profile membership is an unordered categorical outcome rather than an ordinal or continuous one [CITE].
+Coefficients are reported in the supplementary materials as log-odds; the main text instead reports predicted probabilities of profile membership across the predictor range, the standard and more directly interpretable translation of multinomial logit coefficients.
+Two predictor blocks are planned, corresponding to Figures~\ref{fig:lpa-predict-ideology} and~\ref{fig:lpa-predict-wordlview} below: a core sociodemographic and ideological-position block (e.g. age, gender, education, and left--right political position), and a broader values/worldview block (e.g. socio-cultural GAL--TAN position and climate scepticism).
+
+% TODO -- finalise the actual predictor variable list for each block. Column availability differs by wave/survey platform (see Data collection above): only Wave 3 currently fields the extended ideology/GAL--TAN/climate-scepticism battery, so the worldview-predictor model may need to be restricted to Wave 3 rather than pooled across all waves, unlike the sociodemographic block, which is likely available everywhere.
+% TODO -- decide whether the regression is fit per wave/country and compared, or pooled across waves with wave/country as a covariate or interaction term; this affects how Figures~\ref{fig:lpa-predict-ideology} and~\ref{fig:lpa-predict-wordlview} are constructed and what "the" reported coefficients actually represent.
+% TODO -- decide and report the reference profile category (Universalist is the natural middle-category choice, but confirm) and, per Data collection's [CHECK] above, whether the excluded speeder/straight-liner and attention-check respondents are consistent across the predictor set used here.
+
+[CHECK -- \texttt{src/analyse/regression.R} is currently a non-functional placeholder: its predictor-selection step just takes the first mostly-complete, low-cardinality numeric column in the data (\texttt{head(1)}), explicitly marked \texttt{TODO: replace with the actual predictor set ... once decided} in the script itself, and it is not wired into \texttt{rule all} in the Snakefile. Separately, neither \texttt{figures/regression\_probability\_grid.png} nor \texttt{figures/regression\_probability\_grid\_worldviews.png} (referenced in the Results section below) has a producing script anywhere in the repository yet -- \texttt{src/vis/plot\_regression.R} only produces a single-wave coefficient plot (\texttt{\{wave\_id\}\_regression.png}), not these pooled/faceted probability grids. This section describes the intended analysis; none of the results below are computed yet.]
+
+\subsubsection*{Analysis software}
+Quantitative analysis was implemented in R and Python, built as a single reproducible pipeline using the Snakemake workflow management system \autocite{molder2025}.
+Qualitative analysis was conducted in MaxQDA.
+Open-ended text classification and translation used the Anthropic API (Claude).
+
+
+
+\section*{Results}
+
+% TODO: start with basic LPA shares results
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/lpa_composition.png}
+    \caption{Utilitarian justice orientation is a minority view across all sampled countries. The figure shose the share of respondents in each latent profile.  Bars show the percentage of respondents classified into each of three latent profiles (yellow = Utilitarian, blue = Universalist, red = Egalitarian) via latent profile analysis at a fixed three-profile solution, based on their scores on the four justice-principle scales. Percentages within each bar sum to 100\%. Countries are sorted by descending share of the Utilitarian profile. *The United States sample (Wave 2) was measured using a constant-sum (points-allocation) format rather than the Likert scale used in all other samples shown; its profile shares are not directly comparable to the others and should be interpreted with this measurement difference in mind.}
+    \label{fig:lpa-shares}
+\end{figure}
+
+% TODO: then profile predictors, starting with sociodemographic predictors (no plots, but will be in a table) and then moving onto the values/attitudes/worldviews section (with plots)
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/regression_probability_grid.png}
+    \caption{Caption}
+    \label{fig:lpa-predict-ideology}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/regression_probability_grid_worldviews.png}
+    \caption{Caption}
+    \label{fig:lpa-predict-wordlview}
+\end{figure}
+
+\section*{Discussion}
+
+
+
+
+
+\section*{Inclusion \& ethics}
+The recruitment, data collection and storage procedures, and the survey instruments were approved by the ETH Zurich Ethics Commission (Projects EK 2024-N-137, 24 ETHICS-327, 24 ETHICS-415, and 25 ETHICS-358) and the Ethics Board of the Friedrich Alexander University Erlangen-Nürnberg (Project \textbf{??}).
+
+\section*{Data availability}
+Original data supporting the findings of this study are openly available at the following URL/DOI:
+
+\section*{Code availability}
+The code to reproduce the results and all analysis steps are publicly available as a reproducible workflow at the following URL/DOI: 
+
+\section*{References}
+\printbibliography[heading=none]
+
+
+\section*{Acknowledgments}
+
+
+\section*{Author contributions}
+\textbf{Kristiina Joon}: Conceptualisation, Methodology, Investigation, Data curation, Formal analysis, Visualisation, Writing -- Original draft;
+\textbf{Zoë Krzyzanowski}: Conceptualisation, Methodology, Investigation, Data curation;
+\textbf{Veronika Schick}: Conceptualisation, Methodology, Writing -- Review \& editing;
+\textbf{Susanne Hanger-Kopp}: Conceptualisation, Methodology, Writing -- Review \& editing;
+\textbf{Aline Bartenstein}: Investigation, Data curation, Writing -- Review \& editing;
+\textbf{Franziska Bold}: Investigation;
+\textbf{Johan Liliestam}: Funding acquisition, Writing -- Review \& Editing; 
+\textbf{Tim Tröndle}: Conceptualisation, Methodology, Supervision, Writing -- Review \& Editing;
+\textbf{Anthony Patt}: Conceptualisation, Funding acquisition, Supervision, Writing -- Review \& Editing.
+
+\section*{Competing interests}
+The authors declare no competing interests.
+
+\end{document}

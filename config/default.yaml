@@ -164,6 +164,15 @@ metadata_columns:
 lpa:
   n_profiles_max: 8
   random_seed: 42
+  # Bootstrapped likelihood-ratio test (Nylund-Gibson et al.) for the profile
+  # count, run at the two decision boundaries the main text reports (2 vs 3,
+  # 3 vs 4) via mclust's mclustBootstrapLRT() -- a formal test companion to
+  # the information-criteria elbow plot, not a resampling of the elbow plot
+  # itself. maxG=4 gets us the 1-vs-2, 2-vs-3, and 3-vs-4 comparisons in one
+  # sequential run; only the latter two are reported in the main text.
+  blrt:
+    nboot: 999
+    max_g: 4
   # Fixed profile count used only for the cross-wave spaghetti comparison
   # (src/vis/plot_lpa_spaghetti.R) -- independent of each wave's own
   # BIC-optimal G used everywhere else, so every wave/country sample can be
