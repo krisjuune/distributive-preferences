@@ -9,7 +9,7 @@ rule plot_lpa_fit_combined:
         wave_titles = config["lpa"]["spaghetti_titles"],
         ncol = config["lpa"]["spaghetti_ncol"]
     output:
-        figure = "build/figures/lpa_fit_all_waves.png"
+        figure = "build/figures/lpa/lpa_fit_all_waves.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_lpa_fit_combined.R"
@@ -28,7 +28,7 @@ rule plot_lpa_spaghetti:
         wave_titles = config["lpa"]["spaghetti_titles"],
         ncol = config["lpa"]["spaghetti_ncol"]
     output:
-        figure = "build/figures/lpa_spaghetti_all_waves.png"
+        figure = "build/figures/lpa/lpa_spaghetti_all_waves.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_lpa_spaghetti.R"
@@ -44,7 +44,7 @@ rule plot_composition:
     params:
         wave_to_country = config["lpa"]["composition_waves"]
     output:
-        figure = "build/figures/lpa_composition.png"
+        figure = "build/figures/lpa/lpa_composition.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_composition.R"
@@ -67,7 +67,7 @@ rule plot_shapes_by_topic:
     params:
         shape_topics = config["lpa"]["shape_topics"]
     output:
-        figure = "build/figures/lpa_shapes_by_topic.png"
+        figure = "build/figures/lpa/lpa_shapes_by_topic.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_shapes_by_topic.R"
@@ -79,9 +79,9 @@ rule plot_cfa_diagram:
         fit_measures = "build/results/cfa/{cfa_group}_fit_measures.csv",
         loadings = "build/results/cfa/{cfa_group}_loadings.csv"
     output:
-        four_factor = "build/figures/cfa_{cfa_group}_four_factor.png",
-        two_factor = "build/figures/cfa_{cfa_group}_two_factor.png",
-        bifactor = "build/figures/cfa_{cfa_group}_bifactor.png"
+        four_factor = "build/figures/cfa/cfa_{cfa_group}_four_factor.png",
+        two_factor = "build/figures/cfa/cfa_{cfa_group}_two_factor.png",
+        bifactor = "build/figures/cfa/cfa_{cfa_group}_bifactor.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_cfa_diagram.R"
@@ -120,7 +120,7 @@ rule plot_regression_probability_grid:
         fig_width = 12,
         fig_height = 8
     output:
-        figure = "build/figures/regression_probability_grid.png"
+        figure = "build/figures/lpa/regression_probability_grid.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_regression_probability_grid.R"
@@ -148,7 +148,7 @@ rule plot_regression_probability_grid_worldviews:
         fig_width = 12,
         fig_height = 16 / 3  # one row vs. the main grid's three, but doubled so panels aren't too squashed
     output:
-        figure = "build/figures/regression_probability_grid_worldviews.png"
+        figure = "build/figures/lpa/regression_probability_grid_worldviews.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_regression_probability_grid.R"
@@ -172,7 +172,7 @@ rule plot_regression_probability_surface:
         focal_profile = config["regression"]["probability_surface"]["focal_profile"],
         country_labels = config["regression"]["probability_surface"]["country_labels"]
     output:
-        figure = "build/figures/regression_probability_surface.png"
+        figure = "build/figures/lpa/regression_probability_surface.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_regression_probability_surface.R"

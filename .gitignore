@@ -215,5 +215,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Manual files created for the manuscript
-manuscript/
-main.tex
+/manuscript
+
+# Mac
+.DS_Store
