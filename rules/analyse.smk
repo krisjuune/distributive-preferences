@@ -111,3 +111,41 @@ rule regression:
     conda: "../environment.yml"
     script:
         "../src/analyse/regression.R"
+
+
+def _regression_demographics(wildcards):
+    """Look up the fixed demographic control set for a {wave_id}'s topic
+    (regression.demographics, keyed by topic since a pooled group's
+    wave_ids all share one topic by construction -- see regression.groups)."""
+    wave_ids = _regression_wave_ids(wildcards)
+    topics = {wid: meta["topic"] for wid, meta in config["waves"].items()}
+    topic = topics[wave_ids[0]]
+    return config["regression"]["demographics"][topic]
+
+
+rule regression_focal:
+    message: "Fit focal-predictor model for {wildcards.wave_id} / {wildcards.model_key}."
+    input:
+        data = lambda w: expand(
+            "build/data/processed/{wid}.parquet", wid=_regression_wave_ids(w)
+        ),
+        classes = lambda w: expand(
+            "build/results/lpa/{wid}_spaghetti_classes.csv", wid=_regression_wave_ids(w)
+        )
+    params:
+        random_seed = config["regression"]["random_seed"],
+        decay = config["regression"]["decay"],
+        wave_ids = _regression_wave_ids,
+        topics = {wave_id: meta["topic"] for wave_id, meta in config["waves"].items()},
+        countries = {wave_id: meta["country"] for wave_id, meta in config["waves"].items()},
+        demographics = _regression_demographics,
+        # Usually one predictor (model_key == that predictor's own name),
+        # but >1 when model_key names a `group` of columns meant to be
+        # fit together -- see _model_key_predictors() in the Snakefile.
+        focal_predictors = lambda w: _model_key_predictors(w.model_key)
+    output:
+        model = "build/results/regression/focal/{wave_id}__{model_key}_model.rds",
+        model_data = "build/results/regression/focal/{wave_id}__{model_key}_model_data.rds"
+    conda: "../environment.yml"
+    script:
+        "../src/analyse/regression_focal.R"

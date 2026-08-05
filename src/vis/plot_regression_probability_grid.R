@@ -5,12 +5,21 @@
 # together with one shared legend and y-axis so samples and indices are
 # directly comparable at a glance.
 #
+# Each cell is fit from its OWN model (sociodemographics + that one
+# focal predictor only, see regression_focal.R), not one shared model
+# per row reused across every column -- several of a row's attitude/
+# value predictors are collinear enough with each other that a shared
+# "kitchen sink" model distorted individual columns' partial effects
+# (confirmed for wave 4's economic-values column: its coefficient sign
+# flipped between the full model and its actual bivariate relationship
+# with profile membership). See regression.R's module docstring.
+#
 # Not every sample has every index (e.g. wave 3 has no energy security
 # index -- that composite only exists for wave 4, see
-# regression_predictors.R); those cells are simply skipped when building
-# the data, and facet_grid() still draws them as empty panels since
-# row/column are factors with the *full* label set, not just the labels
-# that have data.
+# regression_predictors.R); those cells' focal model is written as NULL
+# by regression_focal.R and simply skipped here, and facet_grid() still
+# draws them as empty panels since row/column are factors with the
+# *full* label set, not just the labels that have data.
 #
 # Each column's x-axis range is standardised across every row that has
 # it (the union of each sample's own observed range), rather than each
@@ -39,16 +48,22 @@ n_boot <- snakemake@params[["n_boot"]]
 ci_level <- snakemake@params[["ci_level"]]
 set.seed(snakemake@params[["random_seed"]])
 
-model_paths <- snakemake@input[["models"]]
-model_data_paths <- snakemake@input[["model_data"]]
+n_cols <- length(col_labels)
+# Inputs are flat, one (model, model_data) pair per rows x columns cell,
+# row-major: cell (i, j) sits at index (i-1)*n_cols + j -- see
+# _focal_pairs() in the Snakefile, which enumerates rows x columns in
+# this same order when building the rule's input list.
+cell_index <- function(i, j) (i - 1) * n_cols + j
 
-models <- lapply(model_paths, readRDS)
-model_datas <- lapply(model_data_paths, readRDS)
+models <- lapply(snakemake@input[["models"]], readRDS)
+model_datas <- lapply(snakemake@input[["model_data"]], readRDS)
 
 column_ranges <- list()
-for (predictor in unique(col_predictors)) {
-  ranges <- lapply(model_datas, function(d) {
-    if (predictor %in% colnames(d)) range(d[[predictor]], na.rm = TRUE) else NULL
+for (j in seq_along(col_labels)) {
+  predictor <- col_predictors[j]
+  ranges <- lapply(seq_along(row_labels), function(i) {
+    d <- model_datas[[cell_index(i, j)]]
+    if (is.null(d) || !predictor %in% colnames(d)) NULL else range(d[[predictor]], na.rm = TRUE)
   })
   ranges <- ranges[!vapply(ranges, is.null, logical(1))]
   if (length(ranges) > 0) column_ranges[[predictor]] <- range(unlist(ranges))
@@ -56,12 +71,11 @@ for (predictor in unique(col_predictors)) {
 
 curves <- list()
 for (i in seq_along(row_labels)) {
-  model <- models[[i]]
-  model_data <- model_datas[[i]]
-
   for (j in seq_along(col_labels)) {
     predictor <- col_predictors[j]
-    if (!predictor %in% colnames(model_data)) {
+    model <- models[[cell_index(i, j)]]
+    model_data <- model_datas[[cell_index(i, j)]]
+    if (is.null(model)) {
       message(sprintf(
         "[plot_regression_probability_grid] %s has no `%s` -- leaving that cell empty",
         row_wave_ids[i], predictor

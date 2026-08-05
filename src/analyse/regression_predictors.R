@@ -69,6 +69,35 @@ na_if_refusal <- function(x) {
   ifelse(x %in% refusals, NA, x)
 }
 
+# Income bands are ascending currency brackets whose *label order* is not
+# their alphabetical string order (e.g. "Above CHF 96,000" alphabetically
+# precedes "CHF 34,001 - CHF 46,000"; wave 2's "above_150k" precedes
+# "25k_below"), so a plain factor() puts them in a meaningless order,
+# which then also determines the reference level and every coefficient's
+# ordering downstream. This orders levels by the smallest number embedded
+# in each label instead of the label string itself -- generalises across
+# every wave's own band wording/currency without hardcoding any of them.
+# Labels with no embedded number at all have no natural ordinal position;
+# rather than sort them arbitrarily, treat them the same way
+# na_if_refusal() treats an explicit refusal string -- recode to NA. This
+# also catches refusal strings na_if_refusal() doesn't have an entry for
+# (e.g. wave 3 CN's Chinese-language "prefer not to disclose" response,
+# which na_if_refusal()'s English-only list was silently missing and
+# which would otherwise have remained in the model as a spurious income
+# "level").
+order_income_by_embedded_number <- function(x) {
+  extract_min_number <- function(label) {
+    stripped <- gsub(",", "", label)
+    digits <- regmatches(stripped, gregexpr("[0-9]+", stripped))[[1]]
+    if (length(digits) == 0) NA_real_ else min(as.numeric(digits))
+  }
+  levels_present <- unique(stats::na.omit(x))
+  keys <- vapply(levels_present, extract_min_number, numeric(1))
+  ordered_levels <- levels_present[!is.na(keys)][order(keys[!is.na(keys)])]
+  x <- ifelse(x %in% ordered_levels, x, NA_character_)
+  factor(x, levels = ordered_levels)
+}
+
 # --- composite index builder --------------------------------------------
 # Averages a set of already-numeric-recoded items into one z-scored index.
 # Polarity is aligned empirically (whichever items correlate negatively
@@ -116,6 +145,22 @@ build_composite_index <- function(item_matrix, label) {
   rowMeans(z, na.rm = FALSE)
 }
 
+# build_composite_index() aligns every item's polarity to whichever raw
+# item is listed first in that index's data.frame (see
+# build_wave_predictors() below) -- so the index's final direction is
+# whatever that first item's raw polarity happens to be, not a
+# deliberately chosen one. Verified empirically (both correlate
+# positively with left_right and the now-correctly-oriented
+# socio_econ_index, i.e. run toward the right-wing-coded pole) that
+# cultural_worldview_ic_index and cultural_worldview_he_index currently
+# run high = individualism / high = hierarchy; this project's convention
+# is the opposite (high = communitarianism / high = egalitarianism, the
+# more distribution-sensitive pole of each axis, for readability
+# alongside the rest of this paper's egalitarian/utilitarian framing).
+# Indices named here are negated after construction in
+# build_wide_model_data() -- see regression_model_helpers.R.
+REVERSED_COMPOSITE_INDICES <- c("cultural_worldview_ic_index", "cultural_worldview_he_index")
+
 # --- per-wave/topic predictor set ---------------------------------------
 # Builds one wave_id's predictor columns, split into two parts:
 #   simple          -- data.frame(respondent_id, <directly usable columns>)
@@ -141,7 +186,7 @@ build_wave_predictors <- function(data, topic, wave_id) {
     simple$age <- factor(data$age) # age band, e.g. "25-34" -- not continuous in any wave
     simple$region <- factor(data$region)
     simple$education <- factor(na_if_refusal(data$education))
-    simple$income <- factor(na_if_refusal(data$income))
+    simple$income <- order_income_by_embedded_number(data$income)
     simple$party <- factor(na_if_refusal(data$party))
 
   } else if (topic == "flying-wtc-wtp") { # wave 2 (CH/CN/US)
@@ -150,7 +195,7 @@ build_wave_predictors <- function(data, topic, wave_id) {
     simple$education <- factor(na_if_refusal(data$education))
     # personal_income used over the near-duplicate income_group column --
     # see manuscript/predictors_table.tex.
-    simple$income <- factor(na_if_refusal(data$personal_income))
+    simple$income <- order_income_by_embedded_number(data$personal_income)
     # CN's questionnaire omits a left-right self-placement item entirely
     # (same omission as wave 3's political_position_1) -- CH/US-only predictor.
     if ("politics" %in% colnames(data)) simple$left_right <- factor(na_if_refusal(data$politics))
@@ -169,7 +214,7 @@ build_wave_predictors <- function(data, topic, wave_id) {
     # name, unlike everything else in this wave.
     education_column <- if ("education_degree" %in% colnames(data)) "education_degree" else "education"
     simple$education <- factor(na_if_refusal(data[[education_column]]))
-    simple$income <- factor(na_if_refusal(data$income))
+    simple$income <- order_income_by_embedded_number(data$income)
     # CN's questionnaire omits a left-right self-placement item entirely
     # (plausibly a political-sensitivity omission) -- CH-only predictor.
     if ("political_position_1" %in% colnames(data)) simple$left_right <- as.numeric(data$political_position_1)
@@ -203,7 +248,12 @@ build_wave_predictors <- function(data, topic, wave_id) {
     # the panel provider; deliberately omitted rather than substituted
     # with anything, see manuscript/predictors_table.tex.
     simple$education_years <- as.numeric(data$SD23_01)
-    simple$income <- as.numeric(data$Income)
+    # Income is coded 1-10 as income deciles, plus 11 meaning "prefer not
+    # to say" -- a refusal code, not an eleventh (highest) decile. Left
+    # unrecoded, it would sit numerically above every real decile and
+    # badly distort a predictor that's otherwise treated as continuous.
+    income_raw <- as.numeric(data$Income)
+    simple$income <- ifelse(income_raw == 11, NA_real_, income_raw)
     simple$type_of_area <- factor(data$type_of_area)
     simple$party <- factor(data$Party)
     # party_preference (up to 13 country-specific levels) deliberately
@@ -249,9 +299,20 @@ build_wave_predictors <- function(data, topic, wave_id) {
       climate_risk = as.numeric(data$climate_change),
       climate_risks = data$climate_risks, extreme_weather = data$extreme_weather
     )
+    # left_right deliberately excluded here despite being the obvious
+    # third "economic values" item: it's already included as its own
+    # separate predictor (see simple$left_right above), and folding it
+    # into this index too made the index ~74% correlated with that
+    # predictor (it would be one of only three items, so nearly a third
+    # of the index's variance is literally the same measurement counted
+    # twice). That circularity was confirmed to flip the sign of this
+    # index's partial effect in the full model relative to its bivariate
+    # (unconditional) relationship with profile membership -- Wave 3's
+    # equivalent index (lreco_1-3) never shares a raw item with its own
+    # left_right predictor, so mirror that design here instead.
     composite_items$socio_econ_index <- data.frame(
       respondent_id = respondent_id,
-      left_right = data$left_right, unemp_lazy = data$unemp_lazy, benefits_strain = data$benefits_strain
+      unemp_lazy = data$unemp_lazy, benefits_strain = data$benefits_strain
     )
     composite_items$socio_cult_index <- data.frame(
       respondent_id = respondent_id,

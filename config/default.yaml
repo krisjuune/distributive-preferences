@@ -254,6 +254,23 @@ regression:
   # brings the max odds ratio from 216 down to ~30 without visibly
   # changing the already well-behaved wave 1-3 estimates.
   decay: 0.1
+  # Fixed sociodemographic control set for the per-column "focal
+  # predictor" models the probability-grid figures use (regression_focal.R),
+  # keyed by topic since every wave_id sharing a topic shares a predictor
+  # set. Deliberately excludes left_right/climate_belief and every
+  # composite value/worldview index -- those are the attitude/value
+  # measures the grids are actually about, and mixing several of them
+  # into the same "held constant" set was confirmed to distort each
+  # other's partial effects via collinearity (e.g. wave 4's economic-
+  # values index correlated 0.6-0.7 with two other indices in the full
+  # model, flipping the sign of its partial effect relative to its real,
+  # bivariate relationship with profile membership). A column not present
+  # for a given wave_id (e.g. wave 3 CN has no language_region, wave 4
+  # only has `country` when pooled) is dropped automatically rather than
+  # erroring -- see regression_focal.R.
+  demographics:
+    ccs-conjoint: [age, gender, language_region, education, income]
+    policy-instruments: [education_years, income, type_of_area, party, household_size, country]
   # Nonparametric bootstrap settings for the predicted-probability
   # confidence bands (see regression_probability_helpers.R) -- resample
   # respondents with replacement, refit, predict on the same grid, and
@@ -294,16 +311,42 @@ regression:
         predictor: cultural_worldview_he_index
       - label: Energy security concern
         predictor: energy_security_index
+  # Third composite grid: sociodemographic predictors (age, gender,
+  # income), each categorical/discrete rather than a continuous z-scored
+  # index -- see plot_regression_probability_categorical.R and
+  # regression_probability_helpers.R's predicted_probability_by_category()
+  # for the point-range (rather than line+ribbon) treatment this needs.
+  # Europe (wave4_eu) has no age/gender yet (not supplied by the panel
+  # provider as of writing) -- those two cells render empty until that
+  # data arrives; income is available for Europe too, just as a discrete
+  # 1-11 ordinal code rather than a labelled band, which the categorical
+  # helper also handles.
+  probability_grid_categorical:
+    rows:
+      - label: Europe
+        wave_id: wave4_eu
+      - label: Switzerland
+        wave_id: wave3_ch
+      - label: China
+        wave_id: wave3_cn
+    columns:
+      - label: Age
+        predictor: age
+      - label: Gender
+        predictor: gender
+      - label: Income
+        predictor: income
   # 2D predicted-probability surface (P(focal_profile) over a grid of two
   # predictors, faceted by country) -- tests whether the two predictors'
   # effects on profile membership are additive or interactive.
   probability_surface:
-    wave_ids: [wave4_eu, wave3_ch, wave3_cn]
+    # Switzerland and China only (both Wave 3) -- Europe (Wave 4) dropped
+    # since it's a different data-collection wave.
+    wave_ids: [wave3_ch, wave3_cn]
     x_predictor: socio_ecol_index
     y_predictor: socio_econ_index
     focal_profile: Utilitarian
     country_labels:
-      wave4_eu: Europe
       wave3_ch: Switzerland
       wave3_cn: China
 

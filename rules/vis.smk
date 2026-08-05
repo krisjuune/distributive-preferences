@@ -101,14 +101,17 @@ rule plot_regression:
 rule plot_regression_probability_grid:
     message: "Plot composite predicted-probability grid across value indices and samples."
     input:
-        models = expand(
-            "build/results/regression/{wave_id}_model.rds",
-            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]]
-        ),
-        model_data = expand(
-            "build/results/regression/{wave_id}_model_data.rds",
-            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]]
-        )
+        # One focal model per rows x columns cell (see regression_focal
+        # rule), flat and row-major (row 1's columns, then row 2's, ...)
+        # -- the plotting script reconstructs the 2D layout from n_cols.
+        models = [
+            f"build/results/regression/focal/{w}__{p}_model.rds"
+            for w, p in _focal_pairs("probability_grid")
+        ],
+        model_data = [
+            f"build/results/regression/focal/{w}__{p}_model_data.rds"
+            for w, p in _focal_pairs("probability_grid")
+        ]
     params:
         row_labels = [row["label"] for row in config["regression"]["probability_grid"]["rows"]],
         row_wave_ids = [row["wave_id"] for row in config["regression"]["probability_grid"]["rows"]],
@@ -129,14 +132,14 @@ rule plot_regression_probability_grid:
 rule plot_regression_probability_grid_worldviews:
     message: "Plot composite predicted-probability grid for cultural worldviews and energy security."
     input:
-        models = expand(
-            "build/results/regression/{wave_id}_model.rds",
-            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]]
-        ),
-        model_data = expand(
-            "build/results/regression/{wave_id}_model_data.rds",
-            wave_id=[row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]]
-        )
+        models = [
+            f"build/results/regression/focal/{w}__{p}_model.rds"
+            for w, p in _focal_pairs("probability_grid_worldviews")
+        ],
+        model_data = [
+            f"build/results/regression/focal/{w}__{p}_model_data.rds"
+            for w, p in _focal_pairs("probability_grid_worldviews")
+        ]
     params:
         row_labels = [row["label"] for row in config["regression"]["probability_grid_worldviews"]["rows"]],
         row_wave_ids = [row["wave_id"] for row in config["regression"]["probability_grid_worldviews"]["rows"]],
@@ -152,6 +155,34 @@ rule plot_regression_probability_grid_worldviews:
     conda: "../environment.yml"
     script:
         "../src/vis/plot_regression_probability_grid.R"
+
+
+rule plot_regression_probability_grid_categorical:
+    message: "Plot composite predicted-probability grid for sociodemographic predictors."
+    input:
+        models = [
+            f"build/results/regression/focal/{w}__{p}_model.rds"
+            for w, p in _focal_pairs("probability_grid_categorical")
+        ],
+        model_data = [
+            f"build/results/regression/focal/{w}__{p}_model_data.rds"
+            for w, p in _focal_pairs("probability_grid_categorical")
+        ]
+    params:
+        row_labels = [row["label"] for row in config["regression"]["probability_grid_categorical"]["rows"]],
+        row_wave_ids = [row["wave_id"] for row in config["regression"]["probability_grid_categorical"]["rows"]],
+        col_labels = [col["label"] for col in config["regression"]["probability_grid_categorical"]["columns"]],
+        col_predictors = [col["predictor"] for col in config["regression"]["probability_grid_categorical"]["columns"]],
+        n_boot = config["regression"]["bootstrap"]["reps"],
+        ci_level = config["regression"]["bootstrap"]["ci_level"],
+        random_seed = config["regression"]["random_seed"],
+        fig_width = 12,
+        fig_height = 9
+    output:
+        figure = "build/figures/lpa/regression_probability_grid_categorical.png"
+    conda: "../environment.yml"
+    script:
+        "../src/vis/plot_regression_probability_categorical.R"
 
 
 rule plot_regression_probability_surface:
