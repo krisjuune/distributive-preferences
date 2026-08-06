@@ -88,6 +88,7 @@ rule all:
         expand("build/figures/cfa/cfa_{cfa_group}_bifactor.png", cfa_group=config["cfa"]["groups"].keys()),
         "build/figures/lpa/lpa_fit_all_waves.png",
         "build/figures/lpa/lpa_spaghetti_all_waves.png",
+        "build/figures/lpa/lpa_spaghetti_all_waves_g4.png",
         "build/figures/lpa/lpa_composition.png",
         "build/figures/lpa/lpa_shapes_by_topic.png",
         expand("build/results/open_ended/{wave_id}_clean.csv", wave_id=config["open_ended"]["waves"]),

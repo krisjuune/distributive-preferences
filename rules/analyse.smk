@@ -42,6 +42,20 @@ rule lpa_fixed_g:
         "../src/analyse/lpa_fixed_g.R"
 
 
+rule lpa_fixed_g4:
+    message: "Fit a fixed-G=4 latent profile model for {wildcards.wave_id} (profile-count robustness check)."
+    input:
+        data = "build/data/processed/{wave_id}.parquet"
+    params:
+        g = config["lpa"]["spaghetti_g4"],
+        random_seed = config["lpa"]["random_seed"]
+    output:
+        classes = "build/results/lpa/{wave_id}_spaghetti_classes_g4.csv"
+    conda: "../environment.yml"
+    script:
+        "../src/analyse/lpa_fixed_g.R"
+
+
 rule cfa:
     message: "Fit confirmatory factor analysis models for {wildcards.cfa_group}."
     input:

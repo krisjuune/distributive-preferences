@@ -23,12 +23,33 @@ rule plot_lpa_spaghetti:
             wave_id=config["waves"].keys()
         )
     params:
+        g = config["lpa"]["spaghetti_g"],
         sample_n = config["lpa"]["spaghetti_sample_n"],
         random_seed = config["lpa"]["random_seed"],
         wave_titles = config["lpa"]["spaghetti_titles"],
         ncol = config["lpa"]["spaghetti_ncol"]
     output:
         figure = "build/figures/lpa/lpa_spaghetti_all_waves.png"
+    conda: "../environment.yml"
+    script:
+        "../src/vis/plot_lpa_spaghetti.R"
+
+
+rule plot_lpa_spaghetti_g4:
+    message: "Plot G=4 spaghetti profiles across all wave/country samples (robustness check)."
+    input:
+        classes = expand(
+            "build/results/lpa/{wave_id}_spaghetti_classes_g4.csv",
+            wave_id=config["waves"].keys()
+        )
+    params:
+        g = config["lpa"]["spaghetti_g4"],
+        sample_n = config["lpa"]["spaghetti_sample_n"],
+        random_seed = config["lpa"]["random_seed"],
+        wave_titles = config["lpa"]["spaghetti_titles"],
+        ncol = config["lpa"]["spaghetti_ncol"]
+    output:
+        figure = "build/figures/lpa/lpa_spaghetti_all_waves_g4.png"
     conda: "../environment.yml"
     script:
         "../src/vis/plot_lpa_spaghetti.R"

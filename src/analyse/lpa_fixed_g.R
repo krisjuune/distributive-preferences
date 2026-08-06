@@ -31,37 +31,70 @@ if (is.null(fit) || is.null(fit$z)) {
 
 wave_id <- snakemake@wildcards[["wave_id"]]
 
-# mclust's own class numbering (1/2/3) is arbitrary per fit, so "class 1"
+# mclust's own class numbering (1/2/3/...) is arbitrary per fit, so "class 1"
 # in one wave has no relationship to "class 1" in another. Relabel by each
-# class's mean level across the 4 justice principles (highest -> Egalitarian,
-# middle -> Universalist, lowest -> Utilitarian) so the label -- and its
-# colour in src/vis/plot_lpa_spaghetti.R -- means the same thing everywhere.
-principle_order <- c("Egalitarian", "Universalist", "Utilitarian")
+# class's mean level across the 4 justice principles (highest -> lowest) so
+# the label -- and its colour in src/vis/plot_lpa_spaghetti.R -- means the
+# same thing everywhere.
+#
+# At G=3 specifically, the 3 levels get named principles (Egalitarian/
+# Universalist/Utilitarian) because that solution is the one reported
+# throughout the rest of the analysis. Any other G (e.g. the G=4 robustness
+# check) gets generic "Profile N" labels instead -- there's no substantive
+# reason a 4th class should map onto one of those 3 names, and doing so
+# would imply a correspondence to the G=3 solution that hasn't been checked.
+if (g == 3) {
+  principle_order <- c("Egalitarian", "Universalist", "Utilitarian")
+} else {
+  principle_order <- paste("Profile", seq_len(g))
+}
+
+utilitarian_column <- indicator_columns[grepl("utilitarian", indicator_columns, ignore.case = TRUE)]
+distributive_columns <- setdiff(indicator_columns, utilitarian_column)
+
+# Wave 2's items are constant-sum (points allocated within each domain
+# always sum to the same total), so every respondent's plain mean across
+# the 4 principles is the same constant regardless of class -- ranking by
+# it is essentially arbitrary there. The egalitarian/sufficientarian/
+# limitarian-vs-utilitarian contrast doesn't have that problem (the split
+# between those two groups of items still varies under a fixed total), so
+# it's used for wave 2 -- but only at G != 3: G=3's principle_order needs
+# the per-country correspondence verified in label_overrides below, which
+# was calibrated against the plain-mean ranking, so switching its ranking
+# key would invalidate that calibration. Outside wave 2, the plain mean is
+# used everywhere (matching G=3) because the contrast metric mis-ranks
+# small, uniformly-low outlier classes -- a tiny "low on everything"
+# cluster can have a higher distributive-vs-utilitarian contrast than a
+# larger, more central class despite sitting well below it on every
+# principle.
+use_contrast <- g != 3 && startsWith(wave_id, "wave2")
+
 class_levels <- lpa_input |>
   mutate(
     mclust_class = fit$classification,
-    overall_level = rowMeans(across(all_of(indicator_columns)))
+    rank_score = if (use_contrast) {
+      rowMeans(across(all_of(distributive_columns))) - .data[[utilitarian_column]]
+    } else {
+      rowMeans(across(all_of(indicator_columns)))
+    }
   ) |>
-  summarise(overall_level = mean(overall_level), .by = mclust_class) |>
-  arrange(desc(overall_level)) |>
+  summarise(rank_score = mean(rank_score), .by = mclust_class) |>
+  arrange(desc(rank_score)) |>
   mutate(profile_class = principle_order[row_number()])
 
 label_by_mclust_class <- setNames(class_levels$profile_class, class_levels$mclust_class)
+profile_class_label <- label_by_mclust_class[as.character(fit$classification)]
 
-# The overall-mean-level heuristic above is meaningless for wave 2: its
-# items are constant-sum (points allocated within each domain always sum to
-# the same total), so every respondent's mean across the 4 principles is
-# the same constant regardless of class -- the ranking it produces there is
-# essentially arbitrary. Manually corrected per country, verified against
-# the actual profile shapes.
+# At G=3, wave 2's plain-mean ranking is arbitrary (see above) and is
+# manually corrected per country instead, verified against the actual
+# profile shapes.
 label_overrides <- list(
   wave2_ch = c(Egalitarian = "Universalist", Universalist = "Egalitarian", Utilitarian = "Utilitarian"),
   wave2_cn = c(Egalitarian = "Utilitarian", Universalist = "Universalist", Utilitarian = "Egalitarian"),
   wave2_us = c(Egalitarian = "Universalist", Universalist = "Utilitarian", Utilitarian = "Egalitarian")
 )
 
-profile_class_label <- label_by_mclust_class[as.character(fit$classification)]
-if (wave_id %in% names(label_overrides)) {
+if (g == 3 && wave_id %in% names(label_overrides)) {
   profile_class_label <- label_overrides[[wave_id]][profile_class_label]
 }
 

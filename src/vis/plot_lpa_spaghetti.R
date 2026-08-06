@@ -1,10 +1,12 @@
 # Spaghetti plot of individual respondent profiles across the 4 justice
-# principles, one row per wave/country sample, each row showing the 3
+# principles, one row per wave/country sample, each row showing the G
 # profile classes (fixed G, see rules/analyse.smk::lpa_fixed_g) side by side
 # plus a bar chart of class sizes. Styled after
 # climate-justice-orientation/lpa/lpa_compare_waves.R.
 #
-# Run through Snakemake (see rules/vis.smk).
+# Run through Snakemake (see rules/vis.smk). Shared between the G=3 main
+# figure and the G=4 robustness check (rules/vis.smk::plot_lpa_spaghetti /
+# plot_lpa_spaghetti_g4) -- `g` selects which.
 
 library(dplyr)
 library(ggplot2)
@@ -16,6 +18,7 @@ library(tidyr)
 source("src/vis/justice_palette.R")
 
 set.seed(snakemake@params[["random_seed"]])
+g <- snakemake@params[["g"]]
 sample_n <- snakemake@params[["sample_n"]]
 wave_titles <- unlist(snakemake@params[["wave_titles"]])
 ncol <- snakemake@params[["ncol"]]
@@ -24,14 +27,26 @@ classes_files <- snakemake@input[["classes"]]
 
 # Preserve the wave/country order the files were listed in (matches
 # config/default.yaml's `waves:` order) for a sensibly ordered stack of rows.
-wave_order <- gsub("_spaghetti_classes\\.csv$", "", basename(classes_files))
-principle_order <- c("Egalitarian", "Universalist", "Utilitarian")
+wave_order <- gsub("_spaghetti_classes(_g4)?\\.csv$", "", basename(classes_files))
+
+# G=3 uses the named-principle labels/colours shared with every other LPA
+# figure (src/vis/justice_palette.R). Any other G (generic "Profile N"
+# labels, see src/analyse/lpa_fixed_g.R) gets its own palette so it isn't
+# visually mistaken for a correspondence to the G=3 classes.
+if (g == 3) {
+  principle_order <- c("Egalitarian", "Universalist", "Utilitarian")
+  class_palette <- justice_palette
+} else {
+  principle_order <- paste("Profile", seq_len(g))
+  generic_colors <- c("#6a3d9a", "#1f78b4", "#33a02c", "#ff7f00", "#e31a1c", "#b15928")
+  class_palette <- setNames(generic_colors[seq_len(g)], principle_order)
+}
 
 all_classes <- bind_rows(lapply(classes_files, read_csv, show_col_types = FALSE)) |>
   mutate(
     wave_id = factor(wave_id, levels = wave_order),
     # profile_class is already a meaningful label (see lpa_fixed_g.R), fixed
-    # to the same 3 levels -- and so the same colour -- across every wave.
+    # to the same `g` levels -- and so the same colour -- across every wave.
     profile_class = factor(profile_class, levels = principle_order)
   )
 
@@ -75,9 +90,9 @@ plot_profiles_for_wave <- function(wave) {
     aes(x = principle, y = value, group = unique_id, color = profile_class)
   ) +
     geom_line(alpha = 0.4, linewidth = 0.5) +
-    facet_wrap(~profile_class, ncol = 3) +
+    facet_wrap(~profile_class, ncol = g) +
     labs(title = wave_titles[[wave]], x = NULL, y = "Standardised score (z)", color = "Profile") +
-    scale_color_manual(values = justice_palette, drop = FALSE) +
+    scale_color_manual(values = class_palette, drop = FALSE) +
     theme_classic() +
     theme(
       plot.title = element_text(size = 10, face = "bold"),
@@ -99,7 +114,7 @@ plot_sizes_for_wave <- function(wave) {
     # guide = "none" at the scale level, not theme(legend.position = "none")
     # -- the latter gets clobbered by the shared `& theme(legend.position =
     # "bottom")` applied to every subplot when collecting guides below.
-    scale_fill_manual(values = justice_palette, drop = FALSE, guide = "none") +
+    scale_fill_manual(values = class_palette, drop = FALSE, guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.35))) +
     theme_classic() +
     theme(
@@ -110,7 +125,9 @@ plot_sizes_for_wave <- function(wave) {
 }
 
 row_plots <- lapply(wave_order, function(wave) {
-  plot_profiles_for_wave(wave) + plot_sizes_for_wave(wave) + plot_layout(widths = c(6, 1))
+  # Bar-chart column stays 1 unit wide regardless of G; the profile-facet
+  # column scales with it (2 units/facet, matching the G=3 6:1 ratio).
+  plot_profiles_for_wave(wave) + plot_sizes_for_wave(wave) + plot_layout(widths = c(2 * g, 1))
 })
 
 # One shared legend (collected from the profile plots' colour scale) at the

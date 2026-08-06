@@ -178,6 +178,13 @@ lpa:
   # BIC-optimal G used everywhere else, so every wave/country sample can be
   # viewed side by side at the same G.
   spaghetti_g: 3
+  # G=4 robustness check on the same cross-wave spaghetti comparison (see
+  # blrt.max_g above -- 4 is the other side of the profile-count decision
+  # boundary reported in the main text). Uses generic "Profile N" labels
+  # rather than named principles: the Egalitarian/Universalist/Utilitarian
+  # naming below is specific to the G=3 solution and isn't meaningful for a
+  # different clustering.
+  spaghetti_g4: 4
   spaghetti_sample_n: 50
   # Number of wave/country blocks per row in the main spaghetti grid.
   spaghetti_ncol: 3
